@@ -14,11 +14,11 @@
 
 ## Pré-requisitos
 
-pip install json
-pip install requests
-pip install youtube-search-python
-pip install pip install python-dotenv
-pip install google-api-python-client
+<li> pip install json </li> 
+<li> pip install requests </li> 
+<li> pip install youtube-search-python </li> 
+<li> pip install pip install python-dotenv </li> 
+<li> pip install google-api-python-client </li> 
 
 ## Para fazer ainda:
 :memo: Conectar com a API do Youtube e criar a Playlist/Atualizar
