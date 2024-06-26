@@ -65,7 +65,7 @@ def has_new_music(playlist, id) -> None:
     playlist_dumped = json.dumps(playlist, ensure_ascii=False)
 
     if saved_playlist:
-        if playlist != saved_playlist:
+        if playlist_dumped != saved_playlist:
             print("New music detected!")
             return save_to_env(playlist, id)
         else:
