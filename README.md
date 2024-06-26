@@ -22,5 +22,6 @@
 
 ## Para fazer ainda:
 :memo: Conectar com a API do Youtube e criar a Playlist/Atualizar
+
 :memo: automação que vê se uma nova música foi adicionada no Spotify e adiciona esta mesma música na playlist do Youtube 
 
