@@ -6,7 +6,7 @@
   Automação em Python que pega uma Playlist do Spotify e transfere para o Youtube Music 
 </p>
 
-## Funcionalidades
+## Funcionalidades para o projeto final
 
 :heavy_check_mark: Gera uma nova Playlist no Youtube Music a partir de uma playlist do Spotify  
 
