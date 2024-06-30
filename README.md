@@ -14,8 +14,9 @@
 
 ## Pré-requisitos
 Baixe o arquivo requirments.txt
+<p
 Execute o comando pip install -r requirements.txt
-
+  </p>
 ## Para fazer ainda:
 :memo: Conectar com a API do Youtube e criar a Playlist/Atualizar
 
