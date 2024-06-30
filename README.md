@@ -13,10 +13,7 @@
 :heavy_check_mark: Automação que vê quando uma nova música é adicionada ao Spotify ela adiciona na Playlist do Youtube Music  
 
 ## Pré-requisitos
-Baixe o arquivo requirments.txt
-<p
-Execute o comando pip install -r requirements.txt
-  </p>
+Baixe o arquivo requirments.txt <p> Execute o comando pip install -r requirements.txt
 ## Para fazer ainda:
 :memo: Conectar com a API do Youtube e criar a Playlist/Atualizar
 
