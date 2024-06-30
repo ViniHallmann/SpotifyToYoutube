@@ -35,7 +35,7 @@ CLIENT_SECRETS_FILE = "client_secret.json"
     FUNÇÃO PARA AUTENTICAR NO YOUTUBE
     AUTOR = Christian (Alemão) 
 """
-def get_authenticated_service():
+def get_authenticated_service() -> str:
     flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRETS_FILE, SCOPES)
     credentials = flow.run_local_server(port=8080, prompt='consent', authorization_prompt_message='')
     return credentials
@@ -44,7 +44,7 @@ def get_authenticated_service():
     FUNÇÃO PARA BUSCAR MUSICA NO YOUTUBE -> RETORNA URL
     AUTOR = Christian (Alemão)
 """
-def search_youtube(item):
+def search_youtube(item) -> str:
     videosSearch = VideosSearch(item, limit=1)
     result = videosSearch.result()
     video_url = result['result'][0]['link']
@@ -54,7 +54,7 @@ def search_youtube(item):
     FUNÇÃO PARA CRIAR PLAYLIST NO YOUTUBE CONFORME TITULO E DESCRIÇÃO NOS PARÂMETROS DA FUNÇÃO
     AUTOR = Christian (Alemão)
 """
-def create_playlist(youtube, title, description):
+def create_playlist(youtube, title, description) -> str:
     request = youtube.playlists().insert(
         part="snippet,status",
         body={
@@ -74,7 +74,7 @@ def create_playlist(youtube, title, description):
     FUNÇÃO PARA ADICIONAR MUSICA NA PLAYLIST DO YOUTUBE A PARTIR DO ID DA MUSICA E DA PLAYLIST
     AUTOR = Christian (Alemão)
 """    
-def add_song_youtube(youtube, playlist_id, video_id):  
+def add_song_youtube(youtube, playlist_id, video_id) -> dict:  
     request = youtube.playlistItems().insert(
         part="snippet",
         body={
@@ -169,7 +169,11 @@ def extract_track_info(playlist_json) -> list:
 
     return playlist_info
 
-def search_youtube_link(playlist_info):
+"""
+    FUNÇÃO PARA BUSCAR MUSICA NO YOUTUBE -> RETORNA PLAYLIST ATUALIZADA COM URL
+    AUTOR = Vine
+"""
+def search_youtube_link(playlist_info) -> list:
 
     for item in playlist_info:
         artist_title_yt_search = (f"{item['title']} - {item['artist']}") # junta título da música e artista pra busca mais precisa no yt
@@ -182,13 +186,16 @@ def search_youtube_link(playlist_info):
 
     return playlist_info
 
-#"""
-def send_to_youtube(playlist_info):
+"""
+    FUNÇÃO PARA ENVIAR AS MÚSICAS DA PLAYLIST DO SPOTIFY PARA O YOUTUBE
+    AUTOR = Vine e Christian
+"""
+def send_to_youtube(playlist_info) -> None:
     for item in playlist_info:
         video_id = item['ytLink'].split("v=")[1].split("&")[0]     # Pega o ID da música com base no link 
         add_song_youtube(youtube, playlist_youtube_id, video_id)   # Adiciona a música a playlist definida na chamada da função
     return None
-#"""
+
 """
     FUNÇÃO PARA SALVAR AS MÚSICAS DA PLAYLIST DO SPOTIFY NO .ENV
     AUTOR = Vine
