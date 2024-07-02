@@ -131,8 +131,14 @@ def get_playlist_tracks(token, playlist_id) -> list:
     headers = get_auth_header(token)
     result = get(url, headers=headers)
     json_result = json.loads(result.content)
-
-    return extract_track_info(json_result)
+    next_url = json_result["tracks"]["next"]
+    while next_url != None:
+        if next_url is None: break
+        result = get(next_url, headers=headers)
+        json_result = json.loads(result.content)
+        print(json_result["items"][0]["track"]["name"])
+        next_url = json_result["next"]
+    #return extract_track_info(json_result)
 
 """
     FUNÇÃO PARA EXTRAIR AS INFORMAÇÕES DAS MÚSICAS DA PLAYLIST DO SPOTIFY
@@ -230,23 +236,22 @@ def has_new_music(playlist, id) -> None:
 
 #========================================================================================================================================================#
 #YOUTUBE CONFIGS
-#"""
+"""
 credentials = get_authenticated_service()                                   # autenticação no youtube
 youtube = build('youtube', 'v3', credentials=credentials)                   # criação do objeto youtube
 playlist_title = "Mandelão do FDS"                                          # titulo da playlist
 description = "Só as boas"                                                  # descrição da playlist
 playlist_youtube_id = create_playlist(youtube, playlist_title, description) # cria uma playlist com base nas config 
-#"""
+"""
 
 #SPOTIFY CONFIGS
 #3aJsKbVHL3U3ZngKqoVUZo?si=aa77820410b34402
-playlist_id = "3aJsKbVHL3U3ZngKqoVUZo?si=aa77820410b34402"                           # id da playlist do spotify
+playlist_id = "3aJsKbVHL3U3ZngKqoVUZo?si=aa77820410b34402"                            # id da playlist do spotify
 #playlist_id = "2A49ff4cDR5xLqzg8L511Q?si=182bc5f9450e412a"                           # id da playlist do spotify
 #playlist_tracks = get_playlist_tracks(get_token(), playlist_id, playlist_youtube_id) # pega as musicas da playlist do spotify
-playlist_tracks = get_playlist_tracks(get_token(), playlist_id) # pega as musicas da playlist do spotify
-playlist_tracks = search_youtube_link(playlist_tracks)
-send_to_youtube(spotify_saved_playlist)
+playlist_tracks = get_playlist_tracks(get_token(), playlist_id)                       # pega as musicas da playlist do spotify
+#send_to_youtube(spotify_saved_playlist)
 
-#save_to_env(playlist_tracks)                                                        # salva as musicas da playlist do spotify no .env
-#has_new_music(playlist_tracks, playlist_id)                                         # verifica se há novas musicas na playlist do spotify
+#save_to_env(playlist_tracks)                                                         # salva as musicas da playlist do spotify no .env
+#has_new_music(playlist_tracks, playlist_id)                                          # verifica se há novas musicas na playlist do spotify
 
