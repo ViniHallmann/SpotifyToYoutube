@@ -132,48 +132,22 @@ def get_playlist_tracks(token, playlist_id) -> list:
     result = get(url, headers=headers)
     json_result = json.loads(result.content)
     next_url = json_result["tracks"]["next"]
-    while next_url != None:
-        if next_url is None: break
-        result = get(next_url, headers=headers)
-        json_result = json.loads(result.content)
-        print(json_result["items"][0]["track"]["name"])
-        next_url = json_result["next"]
-    #return extract_track_info(json_result)
-
 """
     FUNÇÃO PARA EXTRAIR AS INFORMAÇÕES DAS MÚSICAS DA PLAYLIST DO SPOTIFY
     AUTOR = Vine e Christian
 """
 def extract_track_info(playlist_json) -> list:
-
     """with open("playlist.json", "w") as file:
         json.dump(playlist_json, file, indent=4)
     """
 
     for item in playlist_json["tracks"]["items"]:
-        if item["track"] is None:
-            continue
-        artist = item["track"]["artists"][0]["name"]
-        title = item["track"]["name"]
-        playlist_info.append({"artist": artist, "title": title})
-
-    """for item in playlist_json["tracks"]["items"]:
-        artist = item["track"]["artists"][0]["name"]
-        title = item["track"]["name"]
-        playlist_info.append({"artist": artist, "title": title})\
-    """
-        #artist_title_yt_search = (f"{title} - {artist}") # junta título da música e artista pra busca mais precisa no yt
-        #ytLink = search_youtube(artist_title_yt_search) # procura a musica e salva o link 
-        
-        #if ytLink:
-          #  video_id = ytLink.split("v=")[1].split("&")[0] # pega o id da musica com base no link 
-          #  add_song_youtube(youtube, playlist_youtube_id, video_id) # adiciona a música a playlist definida na chamada da func
-          #  playlist_info.append({"artist": artist, "title": title, "ytLink" : ytLink})
-        
-      #  else:
-          #  print(f"Não foi possível encontrar um link para '{artist} - {title}' no YouTube.") # caso nao ache a musica 
-
-    return playlist_info
+        if item["track"] is None: continue
+        else:
+            artist = item["track"]["artists"][0]["name"]
+            title = item["track"]["name"]
+            playlist_info.append({"artist": artist, "title": title})
+            print(title)
 
 """
     FUNÇÃO PARA BUSCAR MUSICA NO YOUTUBE -> RETORNA PLAYLIST ATUALIZADA COM URL
@@ -216,7 +190,7 @@ def save_to_env(playlist, id = None) -> None:
 
 """
     FUNÇÃO PARA VERIFICAR SE HÁ NOVAS MÚSICAS NA PLAYLIST DO SPOTIFY
-    AUTOR = Vine
+    AUTOR = Vine e Christian
 """
 def has_new_music(playlist, id) -> None:
 
@@ -251,7 +225,6 @@ playlist_id = "3aJsKbVHL3U3ZngKqoVUZo?si=aa77820410b34402"                      
 #playlist_tracks = get_playlist_tracks(get_token(), playlist_id, playlist_youtube_id) # pega as musicas da playlist do spotify
 playlist_tracks = get_playlist_tracks(get_token(), playlist_id)                       # pega as musicas da playlist do spotify
 #send_to_youtube(spotify_saved_playlist)
-
 #save_to_env(playlist_tracks)                                                         # salva as musicas da playlist do spotify no .env
 #has_new_music(playlist_tracks, playlist_id)                                          # verifica se há novas musicas na playlist do spotify
 
