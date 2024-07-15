@@ -1,0 +1,23 @@
+FROM n8nio/n8n:latest
+
+USER root
+
+# Instale o software necessário
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Crie um diretório de trabalho
+WORKDIR /usr/src/app
+
+# Copie o arquivo requirements.txt para o diretório de trabalho
+COPY requirements.txt ./
+
+# Instale as dependências Python usando pip, considerando as variáveis de ambiente
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Copie seu código Python para o diretório de trabalho
+COPY main.py .
+
+USER node
