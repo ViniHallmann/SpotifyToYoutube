@@ -2,10 +2,11 @@
 from dotenv import load_dotenv, set_key
 from requests import post
 from requests import get
+import sys
+import argparse
 import os
 import json
 import base64
-import argparse
 #Imports API GOOGLE
 from youtubesearchpython import VideosSearch
 from googleapiclient.discovery import build
@@ -182,6 +183,22 @@ def get_playlist_tracks(token, playlist_id) -> list:
 
     return playlist_info
 
+
+def get_playlist_name(token, playlist_id) -> list: # func para pegar o nome da playlist spotify
+    url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+    headers = get_auth_header(token)
+    result = get(url, headers=headers)
+    json_result = json.loads(result.content)
+    return json_result["name"]
+
+def get_playlist_description(token, playlist_id) -> list: # func para pegar a desc da playlist spotify
+    url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+    headers = get_auth_header(token)
+    result = get(url, headers=headers)
+    json_result = json.loads(result.content)
+    return json_result["description"]
+
+
 def extract_track_info(playlist_json) -> None:
     """
         FUNÇÃO PARA EXTRAIR AS INFORMAÇÕES DAS MÚSICAS DA PLAYLIST DO SPOTIFY
@@ -260,6 +277,7 @@ youtube = build('youtube', 'v3', credentials=credentials)                    # c
 #description = "Só as boas"                                                  # descrição da playlist
 #playlist_youtube_id = create_playlist(youtube, playlist_title, description) # cria uma playlist com base nas config 
 """
+playlist_youtube_id = "PLJx7IIF4C47C-p_1epjTOwMm4jlmRzrEu"
 
 spotify_client_id, spotify_client_secret = get_spotify_variables_env()
 youtube_client_id, youtube_client_secret, youtube_links = get_youtube_variables_env()
@@ -278,11 +296,15 @@ save_links_to_env(links)
 #send_to_youtube(spotify_saved_playlist)
 #save_to_env(playlist_tracks)                                                         # salva as musicas da playlist do spotify no .env
 #has_new_music(playlist_tracks, playlist_id)                                          # verifica se há novas musicas na playlist do spotify
+
 def return_playlist_id():
     playlist_youtube_id = "PLJx7IIF4C47C-p_1epjTOwMm4jlmRzrEu"
     return playlist_youtube_id
 
 def main():
+    print(get_playlist_name(get_token(),"3aJsKbVHL3U3ZngKqoVUZo?si=aa77820410b34402")) # func para pegar o nome da playlist
+    print(get_playlist_description(get_token(), "3aJsKbVHL3U3ZngKqoVUZo?si=aa77820410b34402"))
+    """
     parser = argparse.ArgumentParser(description='Run specific function from the script.')
     parser.add_argument('function', type=str, help='The function to run')
     args = parser.parse_args()
@@ -292,6 +314,6 @@ def main():
         print(result)
     else:
         print(f"Function '{args.function}' not found")
-
+    """
 if __name__ == '__main__':
     main()
