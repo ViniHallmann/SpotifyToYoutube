@@ -5,6 +5,7 @@ from requests import get
 import os
 import json
 import base64
+import argparse
 #Imports API GOOGLE
 from youtubesearchpython import VideosSearch
 from googleapiclient.discovery import build
@@ -259,7 +260,6 @@ youtube = build('youtube', 'v3', credentials=credentials)                    # c
 #description = "Só as boas"                                                  # descrição da playlist
 #playlist_youtube_id = create_playlist(youtube, playlist_title, description) # cria uma playlist com base nas config 
 """
-playlist_youtube_id = "PLJx7IIF4C47C-p_1epjTOwMm4jlmRzrEu"
 
 spotify_client_id, spotify_client_secret = get_spotify_variables_env()
 youtube_client_id, youtube_client_secret, youtube_links = get_youtube_variables_env()
@@ -278,4 +278,20 @@ save_links_to_env(links)
 #send_to_youtube(spotify_saved_playlist)
 #save_to_env(playlist_tracks)                                                         # salva as musicas da playlist do spotify no .env
 #has_new_music(playlist_tracks, playlist_id)                                          # verifica se há novas musicas na playlist do spotify
+def return_playlist_id():
+    playlist_youtube_id = "PLJx7IIF4C47C-p_1epjTOwMm4jlmRzrEu"
+    return playlist_youtube_id
 
+def main():
+    parser = argparse.ArgumentParser(description='Run specific function from the script.')
+    parser.add_argument('function', type=str, help='The function to run')
+    args = parser.parse_args()
+
+    if args.function == 'return_playlist_id':
+        result = return_playlist_id()
+        print(result)
+    else:
+        print(f"Function '{args.function}' not found")
+
+if __name__ == '__main__':
+    main()
