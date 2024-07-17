@@ -326,6 +326,9 @@ def main():
     #youtube_playlist_description = get_playlist_description(get_token(), "ID")
     parser = argparse.ArgumentParser(description='Run specific function from the script.')
     print(format_url_into_id("https://open.spotify.com/playlist/3aJsKbVHL3U3ZngKqoVUZo?si=477510c34f704fea"))
+    playlist_id = 2A49ff4cDR5xLqzg8L511Q?si=d8b0aba5d7434f0b
+    playlist_tracks = get_playlist_tracks(get_token(), playlist_id) 
+
     parser.add_argument('function', type=str, help='The function to run')
     args = parser.parse_args()
     if args.function == 'return_playlist_id':
@@ -335,6 +338,8 @@ def main():
         get_playlist_tracks(get_token(), return_playlist_id()) 
         playlist_name = get_playlist_name(get_token(), return_playlist_id())
         print(f"Musicas resgatadas da playlist: '{playlist_name}'")
+    elif args.function == 'has_new_music':
+        has_new_music(playlist_tracks, playlist_id)
     else:
         print(f"Function '{args.function}' not found")
     
