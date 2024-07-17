@@ -104,6 +104,9 @@ def search_youtube_link(playlist_info) -> list:
 
     return playlist_info
 
+
+# adiciona com base nos itens da playlist
+# INUTILIZADA =========================================
 def send_to_youtube(playlist_info) -> None:
     """
         FUNÇÃO PARA ENVIAR AS MÚSICAS DA PLAYLIST DO SPOTIFY PARA O YOUTUBE
@@ -113,7 +116,10 @@ def send_to_youtube(playlist_info) -> None:
         video_id = item['ytLink'].split("v=")[1].split("&")[0]     # Pega o ID da música com base no link 
         add_song_youtube(youtube, playlist_youtube_id, video_id)   # Adiciona a música a playlist definida na chamada da função
     return None
+# =========================================
 
+
+#  manda para o youtube adicionar usando o env
 def send_links_to_youtube(env_links) -> None:
     """
         FUNÇÃO PARA ENVIAR OS LINKS DAS MÚSICAS DA PLAYLIST DO SPOTIFY PARA O YOUTUBE
@@ -167,37 +173,47 @@ def get_playlist_tracks(token, playlist_id) -> list:
         FUNÇÃO PARA PEGAR AS MÚSICAS DA PLAYLIST DO SPOTIFY
         AUTOR = Vine
     """
+    
     url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
     headers = get_auth_header(token)
     result = get(url, headers=headers)
     json_result = json.loads(result.content)
     next_url = json_result["tracks"]["next"]
     extract_track_info(json_result) 
-
+    
+    #json_result = get_json_result(token, playlist_id)
+    next_url = json_result["tracks"]["next"]
     while next_url != None:
         if next_url == None: break
         result = get(next_url, headers=headers)
         json_result = json.loads(result.content)
         next_url = json_result["next"]
-        extract_track_info(json_result) 
+        extract_track_info(get_json_result(token, playlist_id)) 
 
     return playlist_info
 
 
-def get_playlist_name(token, playlist_id) -> list: # func para pegar o nome da playlist spotify
+def get_json_result(token, playlist_id) -> list:
     url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
     headers = get_auth_header(token)
     result = get(url, headers=headers)
     json_result = json.loads(result.content)
-    return json_result["name"]
+    return json_result
+
+def get_playlist_name(token, playlist_id) -> list: # func para pegar o nome da playlist spotify
+    return get_json_result(token, playlist_id)["name"]
 
 def get_playlist_description(token, playlist_id) -> list: # func para pegar a desc da playlist spotify
-    url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
-    headers = get_auth_header(token)
-    result = get(url, headers=headers)
-    json_result = json.loads(result.content)
-    return json_result["description"]
+    return get_json_result(token, playlist_id)["description"]
 
+def format_url_into_id(url): 
+    # https://open.spotify.com/playlist/3aJsKbVHL3U3ZngKqoVUZo?si=477510c34f704fea
+    try:
+        start = url.index("playlist/") + len("playlist/")
+        id = url[start:]
+        return id
+    except ValueError:
+        return "Id não encontrado"
 
 def extract_track_info(playlist_json) -> None:
     """
@@ -302,18 +318,25 @@ def return_playlist_id():
     return playlist_youtube_id
 
 def main():
-    print(get_playlist_name(get_token(),"3aJsKbVHL3U3ZngKqoVUZo?si=aa77820410b34402")) # func para pegar o nome da playlist
-    print(get_playlist_description(get_token(), "3aJsKbVHL3U3ZngKqoVUZo?si=aa77820410b34402"))
-    """
+    #print(get_playlist_name(get_token(),"3aJsKbVHL3U3ZngKqoVUZo?si=aa77820410b34402")) # func para pegar o nome da playlist
+    #playlist_tracks = get_playlist_tracks(get_token(), "3aJsKbVHL3U3ZngKqoVUZo?si=aa77820410b34402")
+    #print(get_playlist_description(get_token(), "3aJsKbVHL3U3ZngKqoVUZo?si=aa77820410b34402"))
+
+    #youtube_playlist_name = get_playlist_name(get_token(), "ID")
+    #youtube_playlist_description = get_playlist_description(get_token(), "ID")
     parser = argparse.ArgumentParser(description='Run specific function from the script.')
+    print(format_url_into_id("https://open.spotify.com/playlist/3aJsKbVHL3U3ZngKqoVUZo?si=477510c34f704fea"))
     parser.add_argument('function', type=str, help='The function to run')
     args = parser.parse_args()
-
     if args.function == 'return_playlist_id':
         result = return_playlist_id()
         print(result)
+    elif args.function == 'get_playlist_tracks':
+        get_playlist_tracks(get_token(), return_playlist_id()) 
+        playlist_name = get_playlist_name(get_token(), return_playlist_id())
+        print(f"Musicas resgatadas da playlist: '{playlist_name}'")
     else:
         print(f"Function '{args.function}' not found")
-    """
+    
 if __name__ == '__main__':
     main()
