@@ -66,6 +66,7 @@ def create_playlist(youtube, title, description) -> str:
         }
     )
     response = request.execute()
+    print(response['id'])
     return response['id']
  
 def add_song_youtube(youtube, playlist_id, video_id) -> dict:  
@@ -200,10 +201,10 @@ def get_json_result(token, playlist_id) -> list:
     json_result = json.loads(result.content)
     return json_result
 
-def get_playlist_name(token, playlist_id) -> list: # func para pegar o nome da playlist spotify
+def get_playlist_name(token, playlist_id) -> list: 
     return get_json_result(token, playlist_id)["name"]
 
-def get_playlist_description(token, playlist_id) -> list: # func para pegar a desc da playlist spotify
+def get_playlist_description(token, playlist_id) -> list:
     return get_json_result(token, playlist_id)["description"]
 
 def format_url_into_id(url): 
@@ -265,15 +266,16 @@ def save_links_to_env(links) -> None:
     set_key(env_file, 'SPOTIFY_TRACKS_LINKS', links_str)
     return None
 
-def has_new_music(playlist, id) -> None:
+def has_new_music(id: str = None) -> str:
     """
         FUNÇÃO PARA VERIFICAR SE HÁ NOVAS MÚSICAS NA PLAYLIST DO SPOTIFY
         AUTOR = Vine e Christian
     """
-    saved_playlist = os.getenv("PLAYLIST_TRACKS")
-    playlist_dumped = json.dumps(playlist, ensure_ascii=False)
+    return id
+    #saved_playlist = os.getenv("PLAYLIST_TRACKS")
+    #playlist_dumped = json.dumps(playlist, ensure_ascii=False)
 
-    if saved_playlist:
+    """if saved_playlist:
         if playlist_dumped != saved_playlist:
             print("New music detected!")
             return save_to_env(playlist, id)
@@ -281,18 +283,14 @@ def has_new_music(playlist, id) -> None:
             print("No new music detected.")
             return None
     else:
-        print("No saved playlist found.")
+        print("No saved playlist found.")"""
     return None
 
 #========================================================================================================================================================#
 #YOUTUBE CONFIGS
-"""
-credentials = get_authenticated_service()                                    # autenticação no youtube
-youtube = build('youtube', 'v3', credentials=credentials)                    # criação do objeto youtube
-#playlist_title = "Mandelão do FDS"                                          # titulo da playlist
-#description = "Só as boas"                                                  # descrição da playlist
-#playlist_youtube_id = create_playlist(youtube, playlist_title, description) # cria uma playlist com base nas config 
-"""
+#"""
+
+#"""
 playlist_youtube_id = "PLJx7IIF4C47C-p_1epjTOwMm4jlmRzrEu"
 
 spotify_client_id, spotify_client_secret = get_spotify_variables_env()
@@ -317,31 +315,40 @@ def return_playlist_id():
     playlist_youtube_id = "PLJx7IIF4C47C-p_1epjTOwMm4jlmRzrEu"
     return playlist_youtube_id
 
+#python3 /usr/local/scripts/main.py has_new_music {{workflow.variables['playlist_id']}} {{node['HTTP Request'].json['access_token']}}
+
 def main():
-    #print(get_playlist_name(get_token(),"3aJsKbVHL3U3ZngKqoVUZo?si=aa77820410b34402")) # func para pegar o nome da playlist
-    #playlist_tracks = get_playlist_tracks(get_token(), "3aJsKbVHL3U3ZngKqoVUZo?si=aa77820410b34402")
-    #print(get_playlist_description(get_token(), "3aJsKbVHL3U3ZngKqoVUZo?si=aa77820410b34402"))
+    credentials = get_authenticated_service()                     
+    youtube = build('youtube', 'v3', credentials=credentials) 
 
-    #youtube_playlist_name = get_playlist_name(get_token(), "ID")
-    #youtube_playlist_description = get_playlist_description(get_token(), "ID")
+    spotify_token = get_token()
+
     parser = argparse.ArgumentParser(description='Run specific function from the script.')
-    print(format_url_into_id("https://open.spotify.com/playlist/3aJsKbVHL3U3ZngKqoVUZo?si=477510c34f704fea"))
-    playlist_id = 2A49ff4cDR5xLqzg8L511Q?si=d8b0aba5d7434f0b
-    playlist_tracks = get_playlist_tracks(get_token(), playlist_id) 
-
     parser.add_argument('function', type=str, help='The function to run')
+    parser.add_argument('playlist_id', type=str, nargs='?', default=None, help='Playlist ID')
+    parser.add_argument('token', type=str, help='OAuth2 Access Token')
+    
     args = parser.parse_args()
+
+    youtube = build('youtube', 'v3', credentials=args.token) 
     if args.function == 'return_playlist_id':
         result = return_playlist_id()
-        print(result)
+
+    elif args.function == "create_playlist":
+        create_playlist(youtube, get_playlist_name(spotify_token, args.playlist_id), get_playlist_description(spotify_token, args.playlist_id))
+
     elif args.function == 'get_playlist_tracks':
-        get_playlist_tracks(get_token(), return_playlist_id()) 
-        playlist_name = get_playlist_name(get_token(), return_playlist_id())
+        get_playlist_tracks(spotify_token, return_playlist_id()) 
+        playlist_name = get_playlist_name(spotify_token, return_playlist_id())
         print(f"Musicas resgatadas da playlist: '{playlist_name}'")
+
     elif args.function == 'has_new_music':
-        has_new_music(playlist_tracks, playlist_id)
+        result = has_new_music(args.playlist_id)
+        print(result)
     else:
         print(f"Function '{args.function}' not found")
     
 if __name__ == '__main__':
     main()
+
+#https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=453623379966-kgilk354cg400s301bvs9ln2l9tmo96l.apps.googleusercontent.com&redirect_uri=http://localhost:5678/&scope=https://www.googleapis.com/auth/youtube&access_type=offline&prompt=consent

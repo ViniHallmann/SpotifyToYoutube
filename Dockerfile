@@ -10,6 +10,9 @@ RUN python3 -m venv /opt/venv
 RUN mkdir -p /usr/local/scripts
 COPY main.py /usr/local/scripts/main.py
 
+COPY client_secret.json /usr/local/scripts/client_secret.json
+COPY .env /usr/local/scripts/.env
+
 RUN chmod +x /usr/local/scripts/main.py
 
 RUN /opt/venv/bin/pip install --upgrade pip && \
