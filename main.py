@@ -11,41 +11,18 @@ import base64
 from youtubesearchpython import VideosSearch
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
-from flask import Flask, render_template, redirect, url_for
-
+from flask import Flask, render_template, redirect, url_for, session
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
 
 
 playlist_info = []
 
 app = Flask(__name__)
-app.secret_key = os.getenv("YOUTUBE_CLIENT_SECRET")  
 
-@app.route("/")
+@app.route('/')
 def index():
-    # Renderiza seu_arquivo.html da pasta templates
-    return render_template('index.html')
-
-
-# "273ca0d28f604b1e9f7cbedca29efca0" 
-
-
-# @app.route('/callback')
-def callback():
-    state = session['state']
-    flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRETS_FILE, SCOPES, state=state)
-    flow.fetch_token(authorization_response=request.url)
-
-    credentials = flow.credentials
-    session['credentials'] = {
-        'token': credentials.token,
-        'refresh_token': credentials.refresh_token,
-        'token_uri': credentials.token_uri,
-        'client_id': credentials.client_id,
-        'client_secret': credentials.client_secret,
-        'scopes': credentials.scopes
-    }
-
-    # return redirect(url_for('authenticated'))
+    return render_template('index.html')  # Carrega o index.html
 
 #LOAD DAS VARIAVEIS DO SPOTIFY NO .ENV
 def get_spotify_variables_env():
@@ -351,6 +328,7 @@ def return_playlist_id():
 #python3 /usr/local/scripts/main.py has_new_music {{workflow.variables['playlist_id']}} {{node['HTTP Request'].json['access_token']}}
 
 def main():
+    """
     credentials = get_authenticated_service()                     
     youtube = build('youtube', 'v3', credentials=credentials) 
 
@@ -380,10 +358,8 @@ def main():
         print(result)
     else:
         print(f"Function '{args.function}' not found")
-    
+    """
 if __name__ == '__main__':
-    #main()
-    app.run(debug=True)
+    main()
 
-#app.run(debug=True)
 #https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=453623379966-kgilk354cg400s301bvs9ln2l9tmo96l.apps.googleusercontent.com&redirect_uri=http://localhost:5678/&scope=https://www.googleapis.com/auth/youtube&access_type=offline&prompt=consent
