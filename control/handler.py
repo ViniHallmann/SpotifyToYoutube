@@ -115,7 +115,7 @@ def send_to_youtube(playlist_info) -> None:
     """
     for item in playlist_info:
         video_id = item['ytLink'].split("v=")[1].split("&")[0]     # Pega o ID da música com base no link 
-        add_song_youtube(youtube, playlist_youtube_id, video_id)   # Adiciona a música a playlist definida na chamada da função
+        #add_song_youtube(youtube, playlist_youtube_id, video_id)   # Adiciona a música a playlist definida na chamada da função
     return None
 # =========================================
 
@@ -138,7 +138,7 @@ def send_links_to_youtube(env_links) -> None:
     for link in links_list:
         link = link.strip('"')
         video_id = link.split("v=")[1].split("&")[0]
-        add_song_youtube(youtube, playlist_youtube_id, video_id)
+        #add_song_youtube(youtube, playlist_youtube_id, video_id)
      
 #FUNÇÕES LADO SPOTIFY
 def get_token() -> str:
