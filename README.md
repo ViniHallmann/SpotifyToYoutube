@@ -19,3 +19,8 @@ Baixe o arquivo requirments.txt <p> Execute o comando pip install -r requirement
 
 :memo: automação que vê se uma nova música foi adicionada no Spotify e adiciona esta mesma música na playlist do Youtube 
 
+
+## Autores
+
+[Christian Kringel](https://github.com/ChristianKringel) e [Vinícius Hallmann](https://github.com/ViniHallmann)
+
