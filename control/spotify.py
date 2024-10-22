@@ -3,16 +3,14 @@ import base64
 import os
 from requests import get, post
 from dotenv   import load_dotenv, set_key
-from main     import get_spotify_variables_env
 
 playlist_info = []
 
-def get_token() -> str:
+def get_token(spotify_client_id, spotify_client_secret) -> str:
     """
         FUNÇÃO PARA PEGAR O TOKEN DE AUTOENTICAÇÃO DO SPOTIFY
         AUTOR = Vine
     """
-    spotify_client_id, spotify_client_secret = get_spotify_variables_env()
     auth_string = f"{spotify_client_id}:{spotify_client_secret}"
     auth_bytes = auth_string.encode('utf-8')
     auth_base64 = str(base64.b64encode(auth_bytes), 'utf-8')
@@ -25,8 +23,17 @@ def get_token() -> str:
     data = {"grant_type": "client_credentials"}
 
     result = post(url, headers=headers, data=data)
+    
+    if result.status_code != 200:
+        print(f"Erro ao obter o token: {result.status_code}, {result.content}")
+        return None
+    
     json_result = json.loads(result.content)
-    token = json_result["access_token"]
+
+    token = json_result.get("access_token")
+    if not token:
+        print("Erro: 'access_token' não encontrado na resposta.")
+        return None
     return token
 
 def get_auth_header(token) -> dict:
@@ -105,33 +112,24 @@ def extract_track_info(playlist_json) -> None:
                 title = item["track"]["name"]
                 playlist_info.append({"artist": artist, "title": title})
 
-def save_to_env(playlist, id = None) -> None:
-    """
-        FUNÇÃO PARA SALVAR AS MÚSICAS DA PLAYLIST DO SPOTIFY NO .ENV
-        AUTOR = Vine
-    """
+"""def save_to_env(playlist, id = None) -> None:
+
     playlist_tracks_str = json.dumps(playlist, ensure_ascii=False)
     env_file = os.path.join(os.path.dirname(__file__), '.env')
     set_key(env_file, 'SPOTIFY_PLAYLIST_TRACKS', playlist_tracks_str)
     return None
 
 def extract_links(playlist) -> list:
-    """
-    FUNÇÃO PARA EXTRAIR OS LINKS DAS MÚSICAS DA PLAYLIST
-    AUTOR = Vine
-    """
+
     links = [item['ytLink'] for item in playlist if 'ytLink' in item]
     return links
 
 def save_links_to_env(links) -> None:
-    """
-    FUNÇÃO PARA SALVAR OS LINKS DAS MÚSICAS EM UM NOVO .ENV
-    AUTOR = Vine
-    """
+
     links_str = json.dumps(links, ensure_ascii=False)
     env_file = os.path.join(os.path.dirname(__file__), '.env')
     set_key(env_file, 'SPOTIFY_TRACKS_LINKS', links_str)
-    return None
+    return None"""
 
 def has_new_music(id: str = None) -> str:
     """
