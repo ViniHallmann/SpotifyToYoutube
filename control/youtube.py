@@ -3,11 +3,9 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
-from main     import get_youtube_variables_env
-
 #Autenticando com o client_secret.json
 SCOPES = ['https://www.googleapis.com/auth/youtube']
-CLIENT_SECRETS_FILE = "client_secret.json"
+CLIENT_SECRETS_FILE = "util/client_secret.json"
 
 #FUNÇÕES LADO YOUTUBE
 def get_authenticated_service() -> str:
@@ -18,6 +16,13 @@ def get_authenticated_service() -> str:
     flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRETS_FILE, SCOPES)
     credentials = flow.run_local_server(port=8080, prompt='consent', authorization_prompt_message='')
     return credentials
+
+def build_youtube_service() -> str:
+    """
+        FUNÇÃO PARA CONSTRUIR O SERVIÇO DO YOUTUBE
+        AUTOR = Vini
+    """
+    return build('youtube', 'v3', credentials=get_authenticated_service()) 
 
 def search_youtube(item) -> str:
     """
@@ -47,7 +52,6 @@ def create_playlist(youtube, title, description) -> str:
         }
     )
     response = request.execute()
-    print(response['id'])
     return response['id']
  
 def add_song_youtube(youtube, playlist_id, video_id) -> dict:  
@@ -101,16 +105,15 @@ def search_youtube_link(playlist_info) -> list:
 # =========================================
 
 
-#  manda para o youtube adicionar usando o env
-def send_links_to_youtube(env_links) -> None:
+def send_links_to_youtube(youtube, playlist_youtube_id) -> None:
     """
         FUNÇÃO PARA ENVIAR OS LINKS DAS MÚSICAS DA PLAYLIST DO SPOTIFY PARA O YOUTUBE
         AUTOR = Vine e Christian
     """
-    youtube_client_id, youtube_client_secret, youtube_links = get_youtube_variables_env()
-    credentials = get_authenticated_service()
-    playlist_youtube_id = "PLJx7IIF4C47C-p_1epjTOwMm4jlmRzrEu"    
-    youtube = build('youtube', 'v3', credentials=credentials) 
+    #youtube_client_id, youtube_client_secret, youtube_links = get_youtube_variables_env()
+    #credentials = get_authenticated_service()
+    #playlist_youtube_id = "PLJx7IIF4C47C-p_1epjTOwMm4jlmRzrEu"    
+    #youtube = build('youtube', 'v3', credentials=credentials) 
     cleaned_links = env_links.strip('[]')
     links_list = cleaned_links.split(", ")
     
