@@ -1,6 +1,7 @@
-from youtubesearchpython import VideosSearch
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
+import os
+from youtubesearchpython            import VideosSearch
+from googleapiclient.discovery      import build
+from google_auth_oauthlib.flow      import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 #Autenticando com o client_secret.json
@@ -105,25 +106,11 @@ def search_youtube_link(playlist_info) -> list:
 # =========================================
 
 
-def send_links_to_youtube(youtube, playlist_youtube_id) -> None:
+def send_links_to_youtube(youtube, playlist_youtube_id, playlist_info) -> None:
     """
         FUNÇÃO PARA ENVIAR OS LINKS DAS MÚSICAS DA PLAYLIST DO SPOTIFY PARA O YOUTUBE
         AUTOR = Vine e Christian
     """
-    #youtube_client_id, youtube_client_secret, youtube_links = get_youtube_variables_env()
-    #credentials = get_authenticated_service()
-    #playlist_youtube_id = "PLJx7IIF4C47C-p_1epjTOwMm4jlmRzrEu"    
-    #youtube = build('youtube', 'v3', credentials=credentials) 
-    cleaned_links = env_links.strip('[]')
-    links_list = cleaned_links.split(", ")
-    
-    # Remova as aspas do primeiro e do último link, se necessário
-    if links_list[0].startswith('"'):
-        links_list[0] = links_list[0][1:]
-    if links_list[-1].endswith('"'):
-        links_list[-1] = links_list[-1][:-1]
-    
-    for link in links_list:
-        link = link.strip('"')
-        video_id = link.split("v=")[1].split("&")[0]
-        add_song_youtube(youtube, playlist_youtube_id, video_id)
+    for item in playlist_info:
+        video_id = item['ytLink'].split("v=")[1].split("&")[0]
+        add_song_youtube(youtube, playlist_youtube_id, video_id) 
