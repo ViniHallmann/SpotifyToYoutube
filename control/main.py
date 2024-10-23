@@ -9,7 +9,7 @@ import os
 import json
 import base64
 
-from youtube import get_authenticated_service, build_youtube_service, search_youtube_link, create_playlist, add_song_youtube
+from youtube import get_authenticated_service, build_youtube_service, search_youtube_link, create_playlist, send_links_to_youtube
 from spotify import get_token, get_playlist_tracks, get_playlist_name, get_playlist_description
 #Imports API GOOGLE
 playlist_info = []
@@ -36,29 +36,25 @@ spotify_client_id, spotify_client_secret = get_spotify_variables_env()
 youtube_client_id, youtube_client_secret, youtube_links = get_youtube_variables_env()
 
 def get_playlist_id():
+    #return "3aJsKbVHL3U3ZngKqoVUZo"
     return "2A49ff4cDR5xLqzg8L511Q"
 
 def main():
     #WORKFLOW: -> RUN MAIN -> GET_BUILD -> GET_TOKEN -> GET_PLAYLIST_TRACKS -> GET_TRACKS_INFO 
     #          -> GET_YOUTUBE_LINKS -> GET_YOUTUBE_ID -> GET_YOUTUBE_PLAYLIST -> GET_YOUTUBE_TRACKS 
     #          -> GET_YOUTUBE_TRACKS_INFO -> ADD_YOUTUBE_TRACKS -> RETURN
-    #youtube = build_youtube_service()
-    spotify = get_token(spotify_client_id, spotify_client_secret)
+    #SPOTIFY SIDE
+    spotify         = get_token(spotify_client_id, spotify_client_secret)
+    sp_playlist_id  = get_playlist_id()
+    sp_playlist_info   = get_playlist_tracks(spotify, sp_playlist_id)
+    sp_playlist_name   = get_playlist_name(spotify, sp_playlist_id)
+    sp_playlist_desc   = get_playlist_description(spotify, sp_playlist_id)
 
-    #GET SPOTIFY PLAYLIST
-    playlist_id_sp  = get_playlist_id()
-    playlist_info   = get_playlist_tracks(spotify, playlist_id_sp)
-    playlist_name   = get_playlist_name(spotify, playlist_id_sp)
-    playlist_desc   = get_playlist_description(spotify, playlist_id_sp)
-
-    print(playlist_id_sp)
-    print(playlist_info)
-    print(playlist_name)
-    print(playlist_desc)
-
-    #GET YOUTUBE LINKS
-    #youtube_playlist_id = create_playlist(youtube, playlist_name, playlist_desc)
-    #playlist_info       = search_youtube_link(playlist_info)
+    #YOUTUBE SIDE
+    youtube             = build_youtube_service()
+    playlist_info       = search_youtube_link(sp_playlist_info)
+    yt_playlist_id      = create_playlist(youtube, sp_playlist_name, sp_playlist_desc)
+    send_links_to_youtube(youtube, yt_playlist_id, playlist_info)
 
     pass
 
