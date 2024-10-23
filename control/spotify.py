@@ -48,11 +48,11 @@ def get_playlist_tracks(token, playlist_id) -> list:
         FUNÇÃO PARA PEGAR AS MÚSICAS DA PLAYLIST DO SPOTIFY
         AUTOR = Vine
     """
-    url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+    url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
     headers = get_auth_header(token)
     result = get(url, headers=headers)
     json_result = json.loads(result.content)
-    next_url = json_result["tracks"]["next"]
+    #next_url = json_result["tracks"]["next"]
     extract_track_info(json_result) 
     
     next_url = json_result["tracks"]["next"]
@@ -66,7 +66,7 @@ def get_playlist_tracks(token, playlist_id) -> list:
     return playlist_info
 
 def get_json_result(token, playlist_id) -> list:
-    url = f"https://api.spotify.com/v1/playlists/{playlist_id}/tracks"
+    url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
     headers = get_auth_header(token)
     result = get(url, headers=headers)
     json_result = json.loads(result.content)
@@ -95,6 +95,9 @@ def extract_track_info(playlist_json) -> None:
         FUNÇÃO PARA EXTRAIR AS INFORMAÇÕES DAS MÚSICAS DA PLAYLIST DO SPOTIFY
         AUTOR = Vine e Christian
     """
+    #with open("playlist.json", "w") as file:
+    #    json.dump(playlist_json, file, indent=4)
+        
     if "tracks" in playlist_json: 
         for item in playlist_json["tracks"]["items"]:
             if item["track"] is None:
@@ -103,7 +106,7 @@ def extract_track_info(playlist_json) -> None:
                 artist = item["track"]["artists"][0]["name"]
                 title = item["track"]["name"]
                 playlist_info.append({"artist": artist, "title": title})
-    else: 
+    else:
         for item in playlist_json["items"]:
             if item["track"] is None:
                 continue
