@@ -18,12 +18,12 @@ def get_authenticated_service() -> str:
     credentials = flow.run_local_server(port=8080, prompt='consent', authorization_prompt_message='')
     return credentials
 
-def build_youtube_service() -> str:
+#def build_youtube_service() -> str:
     """
         FUNÇÃO PARA CONSTRUIR O SERVIÇO DO YOUTUBE
         AUTOR = Vini
     """
-    return build('youtube', 'v3', credentials=get_authenticated_service()) 
+    #return build('youtube', 'v3', credentials=get_authenticated_service()) 
 
 def search_youtube(item) -> str:
     """
@@ -112,5 +112,6 @@ def send_links_to_youtube(youtube, playlist_youtube_id, playlist_info) -> None:
         AUTOR = Vine e Christian
     """
     for item in playlist_info:
+        print(item)
         video_id = item['ytLink'].split("v=")[1].split("&")[0]
         add_song_youtube(youtube, playlist_youtube_id, video_id) 
